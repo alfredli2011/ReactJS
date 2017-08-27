@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+	<title>Product</title>
+	<script src="https://fb.me/react-15.0.0.js"></script>
+	<script src="https://fb.me/react-dom-15.0.0.js"></script> 
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
+	<script src="http://code.jquery.com/jquery-3.2.1.min.js"></script>
+	<style>
+		body {
+			margin-top:40px;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<div id="products"></div>
+			</div>
+		</div>
+	</div>
+
+	<script type="text/babel">
+		var Products=React.createClass({
+			handleProductSubmit:function(product){
+				$.ajax({
+					url:this.state.url,
+					dataType:'json',
+					type:'POST',
+					data:product,
+					success:function(data){
+						this.setState({productData:data});
+						console.log(data);
+					}.bind(this),
+					error:function(xhr,status,err){
+						console.log(err);
+					}.bind(this)
+				});
+			},
+			loadProductData:function(){
+				$.ajax({
+					url:this.state.url,
+					dataType:'json',
+					cache:false,
+					success:function(data){
+						console.log(data);
+						this.setState({productData:data});
+					}.bind(this),
+					error:function(xhr,status,err){
+						console.log(err);
+					}.bind(this)
+				});
+			},
+			getDefaultProps:function(){
+				return {
+					interval:2000
+				}
+			},
+			getInitialState:function(){
+				return {
+					productData:[],
+					url:'/api/products'
+				}
+			},
+			componentDidMount:function(){
+				this.loadProductData();
+			},
+			render:function(){
+				return <div>
+					<div className="row">
+						<div className="col-md-6">
+							<ProductForm onProductSubmit={this.handleProductSubmit}/>
+						</div>
+						<div className="col-md-6">
+							<h2>Products</h2>
+							<ProductList productData={this.state.productData}/>
+						</div>
+					</div>	
+				</div>;
+			}
+		});
+
+		var ProductForm=React.createClass({
+			handleSubmit:function(e){
+				e.preventDefault();
+				var product={
+					id:this.refs.id.value.trim(),
+					name:this.refs.name.value.trim(),
+					description:this.refs.description.value.trim(),
+					price:this.refs.price.value.trim(),
+					buy_url:this.refs.buy_url.value.trim(),
+					image_url:this.refs.image_url.value.trim()
+				};
+				if(!product.id||!product.name||!product.price){
+					alert('Please fill in all the required fields!');
+					return;
+				}
+				this.props.onProductSubmit(product);
+				this.refs.id.value='';
+				this.refs.name.value='';
+				this.refs.description.value='';
+				this.refs.price.value='';
+				this.refs.buy_url.value='';
+				this.refs.image_url.value='';
+			},
+			render:function(){
+				return <div>
+					<h3>Add Product</h3>
+					<form onSubmit={this.handleSubmit}>
+						<div className="form-group">
+							<label>Product ID *</label>
+							<input type="text" className="form-control" placeholder="Enter ID" ref="id" />
+						</div>
+						<div className="form-group">
+							<label>Product Name *</label>
+							<input type="text" className="form-control" placeholder="Enter Name" ref="name" />
+						</div>
+						<div className="form-group">
+							<label>Description</label>
+							<textarea className="form-control" placeholder="Enter Description" ref="description"></textarea>
+						</div>
+						<div className="form-group">
+							<label>Price *</label>
+							<input type="text" className="form-control" placeholder="Enter Price" ref="price" />
+						</div>
+						<div className="form-group">
+							<label>Buy URL</label>
+							<input type="text" className="form-control" placeholder="Enter Buy URL" ref="buy_url" />
+						</div>
+						<div className="form-group">
+							<label>Image URL</label>
+							<input type="text" className="form-control" placeholder="Enter Image URL" ref="image_url" />
+						</div>
+						<button type="submit">Submit</button>
+					</form>
+				</div>
+			}
+		});
+
+		var ProductList=React.createClass({
+			render:function(){
+				var productNodes=this.props.productData.map(function(product,index){
+					var productFields={
+						id:product.id,
+						name:product.name,
+						description:product.description,
+						price:product.price,
+						buy_url:product.buy_url,
+						image_url:product.image_url
+					};
+					return <Product productFields={productFields} />;
+				})
+				return <div>
+					{productNodes}
+				</div>;
+			}
+		});
+		var Product=React.createClass({
+			render:function(){
+				return <div className="well product">
+					<div className="row">
+						<div className="col-md-4">
+							<img src={this.props.productFields.image_url} style={{width:"100%"}} />
+						</div>
+						<div className="col-md-8">
+							<h3><a href={this.props.productFields.buy_url} target="_blank">{this.props.productFields.name}</a></h3>
+							<p>{this.props.productFields.description}</p>
+							<small>$ {this.props.productFields.price}</small>
+						</div>
+					</div>
+				</div>;
+			}
+		});
+
+		ReactDOM.render(
+			<Products />,
+			document.getElementById('products')
+			);
+	</script>
+</body>
+</html>

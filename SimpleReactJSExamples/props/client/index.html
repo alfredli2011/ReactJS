@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Property</title>
+	<script src="https://fb.me/react-15.0.0.js"></script>
+	<script src="https://fb.me/react-dom-15.0.0.js"></script> 
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
+</head>
+<body>
+	<div id="container"></div>
+
+	<script type="text/babel">
+		var MyComponent=React.createClass({
+			getDefaultProps:function(){
+				return{
+					myString:'Hello'
+				}
+			},
+			propTypes:{
+				myString:React.PropTypes.string,
+				myArray:React.PropTypes.arrayOf(React.PropTypes.string)
+			},
+			render:function(){
+				return <div>
+					<h3>myString: {this.props.myString.isRequired}</h3>
+					<h3>myArray: {this.props.myArray}</h3>
+				</div>;
+			}
+		});
+
+		ReactDOM.render(
+			<MyComponent myArray={[1,2,3]}/>,
+			document.getElementById('container')
+			);
+	</script>
+</body>
+</html>

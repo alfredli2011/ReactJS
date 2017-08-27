@@ -1,0 +1,21 @@
+{
+  "name": "reactproject",
+  "version": "1.0.0",
+  "description": "Simple Web Server",
+  "main": "server.js",
+  "dependencies": {
+    "body-parser": "*",
+    "express": "*"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Yohann",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-preset-env": "^1.6.0",
+    "babel-preset-react": "^6.24.1"
+  }
+}

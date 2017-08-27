@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+	<title>Webserver Test</title>
+	<script src="https://fb.me/react-15.0.0.js"></script>
+	<script src="https://fb.me/react-dom-15.0.0.js"></script> 
+	<script src="https://fb.me/react-with-addons-0.14.3.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
+	<script src="http://code.jquery.com/jquery-3.2.1.min.js"></script>
+	<style>
+		body {
+			margin-top:30px;
+		}
+		#tasks div {
+			padding:10px;
+			background:#f4f4f4;
+			border:1px #ccc solid;
+			display:block;
+			width:100%;
+			margin:5px;
+		}
+		.tasks-enter {
+			opacity:0.01;
+			transition:opacity 1s ease-in;
+
+		}
+		.tasks-enter .tasks-enter-active {
+			opacity:1;
+		}
+		.tasks-leave {
+			opacity:1;
+			transition:opacity 1s ease-in;
+		}
+		.tasks-leave .tasks-leave-active {
+			opacity:0.01;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-5">
+				<div id="tasks"></div>
+			</div>
+		</div>
+	</div>
+	<script type="text/babel">
+	var ReactCSSTransitionGroup=React.addons.CSSTransitionGroup;
+	var TaskList=React.createClass({
+		getInitialState:function(){
+			return {
+				items:['Bring the knids to school - 7am']
+			}
+		},
+		handleAdd:function(){
+			var newItem=prompt('Add a task');
+			if(newItem){
+				this.setState({items:this.state.items.concat([newItem])});
+			}
+		},
+		handleRemove:function(index){
+			this.state.items.splice(index,1);
+			this.setState({items:this.state.items});
+		},
+		render:function(){
+			var self=this;
+			var items=this.state.items.map(function(item,index){
+				return <div key={item} onClick={self.handleRemove.bind(self,index)}>
+					{item}
+				</div>;
+			});
+			return <div>
+				<button className="btn btn-primary btn-block" onClick={this.handleAdd}>Add Task</button>
+				<ReactCSSTransitionGroup transitionName="tasks" transitionEnterTimeout={1000} transitionLeaveTimeout={500}>{items}</ReactCSSTransitionGroup>
+			</div>
+		}
+	});
+	React.render(
+		<TaskList />,
+		document.getElementById('tasks')
+		);
+	</script>
+</body>
+</html>
