@@ -1,1 +1,1 @@
-# ReactJS Practices
+# ReactJS
